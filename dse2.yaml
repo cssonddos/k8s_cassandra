@@ -1,0 +1,54 @@
+apiVersion: cassandra.datastax.com/v1beta1
+kind: CassandraDatacenter
+metadata:
+  # The datacenter name.
+  name: dc2
+spec:
+  clusterName: minikube
+  # Which server distribution to use. Required.
+  serverType: dse
+  # Which server version to use. Required.
+  serverVersion: "6.8.4"
+
+  # Users must provide managementApiAuth.
+  # If insecure is used, the operator will not secure the Management API on each
+  # pod with mutual TLS.
+  # If manual is used, Cass Operator will load the clientSecretName and
+  # serverSecretName as secrets and and secure the Management API on each pod
+  # with mutual TLS encryption.
+  # More options will be available here in the future.
+  managementApiAuth:
+    insecure: {}
+
+  racks:
+    - name: rack1
+
+  # The number of server nodes.
+  size: 1
+
+  allowMultipleNodesPerWorker: true
+  
+  # Limit each pod to a fixed 300m CPU cores and 400m of RAM.
+  resources:
+    requests:
+      memory: 3Gi
+      cpu: 300m
+    limits:
+      memory: 3Gi
+      cpu: 300m
+  storageConfig:
+    cassandraDataVolumeClaimSpec:
+      storageClassName: server-storage
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+  config:
+    jvm-server-options:
+      initial_heap_size: "2G"
+      max_heap_size: "2G"
+      additional-jvm-opts:
+        # As the database comes up for the first time, set system keyspaces to RF=1
+        - "-Ddse.system_distributed_replication_dc_names=dc1"
+        - "-Ddse.system_distributed_replication_per_dc=1"
