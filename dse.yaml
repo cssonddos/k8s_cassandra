@@ -26,10 +26,10 @@ spec:
   # Limit each pod to a fixed 300m CPU cores and 400m of RAM.
   resources:
     requests:
-      memory: 400m
+      memory: 4Gi
       cpu: 300m
     limits:
-      memory: 400m
+      memory: 4Gi
       cpu: 300m
   storageConfig:
     cassandraDataVolumeClaimSpec:
@@ -41,8 +41,8 @@ spec:
           storage: 5Gi
   config:
     jvm-server-options:
-      initial_heap_size: "200M"
-      max_heap_size: "200M"
+      initial_heap_size: "2G"
+      max_heap_size: "2G"
       additional-jvm-opts:
         # As the database comes up for the first time, set system keyspaces to RF=1
         - "-Ddse.system_distributed_replication_dc_names=dc1"
